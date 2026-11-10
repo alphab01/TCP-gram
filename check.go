@@ -12,13 +12,14 @@ func obrabotka(c net.Conn) {
 		return
 	}
   for {
-    d := make([]byte, 64)
+    d := make([]byte, 10000)
     _, err := c.Read(d)
     if (err != nil) {
       return
     }
 		if (len(string(d)) > 0) {
-			fmt.Println(string(d))
+			fmt.Print(string(d))
+			fmt.Println(c.RemoteAddr())
 		}
   }
 }
