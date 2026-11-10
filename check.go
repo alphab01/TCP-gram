@@ -5,13 +5,8 @@ import (
 	"net"
 )
 
-func obrabotka(l net.Listener) {
-	c, err := l.Accept()
-	if err != nil {
-		fmt.Println(2)
-		return
-	}
-	_, err = c.Write([]byte("hello"))
+func obrabotka(l net.Listener, c net.Conn) {
+	_, err := c.Write([]byte("hello"))
 	if err != nil {
 		fmt.Println(3)
 		return
@@ -25,6 +20,12 @@ func main() {
 		fmt.Println(1)
 	}
 	for {
-		go obrabotka(l)
+		c, err := l.Accept()
+		if err != nil {
+			fmt.Println(2)
+			continue
+		} else {
+			go obrabotka(l, c)
+		}
 	}
 }
