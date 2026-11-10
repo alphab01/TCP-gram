@@ -1,29 +1,59 @@
 package main
 
 import (
-  "fmt"
-  "net/http"
+	"fmt"
+	"net"
+	"strconv"
 )
 
-func h(w http.ResponseWriter, r *http.Request) {
-  fmt.Println("hello world")
+var lc map[net.Conn]string
+
+var k int
+
+func obrabotka(c net.Conn) {
+	defer c.Close()
+	_, err := c.Write([]byte("hello"))
+	if err != nil {
+    lc[c] = "err"
+		return
+	}
+  for {
+    d := make([]byte, 10000)
+    s, err := c.Read(d)
+    if (err != nil) {
+      lc[c] = "err"
+			return
+    }
+		if (len(string(d[:s])) > 0) {
+			fmt.Print(string(d[:s]))
+			fmt.Println(c.RemoteAddr())
+			for i, m := range lc {
+        if (m != "err") {
+  	    	i.Write([]byte(lc[c] + ":\n" + string(d[:s])))
+        }
+			}
+		}
+  }
 }
 
-/*var Usrs []http.ResponseWriter
-
-func h(w http.ResponseWriter, r *http.Request) {
-  for i := 0; i < len(Usrs); i++ {
-    Usrs[i].Write([]byte("Hello world"))
-  }
-  w.Write([]byte("Hello world"))
-  Usrs = append(Usrs, w)
-  fmt.Println("Hello world")
-}*/
-
 func main() {
-  http.HandleFunc("/", h)
-  err := http.ListenAndServe(":8080", nil)
-  if (err != nil) {
-    fmt.Println(err)
-  }
+	lc = make(map[net.Conn]string)
+  k = 0
+	l, err := net.Listen("tcp", "localhost:8080")
+	if err != nil {
+		fmt.Println(1)
+		l.Close()
+		return
+	}
+	defer l.Close()
+	for {
+		c, err := l.Accept()
+		if err != nil {
+			fmt.Println(2)
+		} else {
+      lc[c] = strconv.Itoa(k)
+      k++
+			go obrabotka(c)
+		}
+	}
 }
