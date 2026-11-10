@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net"
+	"strconv"
 )
 
 var lc []net.Conn
@@ -22,8 +23,15 @@ func obrabotka(c net.Conn) {
 		if (len(string(d)) > 0) {
 			fmt.Print(string(d))
 			fmt.Println(c.RemoteAddr())
+			q := 0
 			for i := 0; i < len(lc); i++ {
-				lc[i].Write(d)
+				if (c == lc[i]) {
+					q = i
+					break
+				}
+			}
+			for i := 0; i < len(lc); i++ {
+				lc[i].Write([]byte(strconv.Itoa(q) + ":\n" + string(d)))
 			}
 		}
   }
