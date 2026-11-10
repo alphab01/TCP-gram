@@ -5,8 +5,13 @@ import (
   "net/http"
 )
 
+var Usrs []http.ResponseWriter
+
 func h(w http.ResponseWriter, r *http.Request) {
-  w.Write([]byte("Hello world"))
+  for i := 0; i < len(Usrs); i++ {
+    Usrs[i].Write([]byte("Hello world"))
+  }
+  Usrs = append(Usrs, w)
 }
 
 func main() {
