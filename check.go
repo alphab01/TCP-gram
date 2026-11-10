@@ -2,10 +2,22 @@ package main
 
 import (
   "fmt"
-  "net/http"
+  "net"
 )
 
 func main() {
-  l, _ := net.Listen("tcp", "localhost:8080")
-
+  for {
+    l, err := net.Listen("tcp", "localhost:8080")
+    if (err != nil) {
+      fmt.Println(1)
+    }
+    c, err := l.Accept()
+    if (err != nil) {
+      fmt.Println(2)
+    }
+    _, err = c.Write([]byte("hello"))
+    if (err != nil) {
+      fmt.Println(3)
+    }
+  }
 }
