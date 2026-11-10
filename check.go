@@ -20,6 +20,7 @@ func obrabotka(c net.Conn) {
 		if (len(string(d)) > 0) {
 			fmt.Print(string(d))
 			fmt.Println(c.RemoteAddr())
+			c.Write(d)
 		}
   }
 }
