@@ -9,10 +9,18 @@ func obrabotka(c net.Conn) {
 	_, err := c.Write([]byte("hello"))
 	if err != nil {
 		fmt.Println(3)
-		c.Close()
 		return
 	}
-	c.Close()
+  for {
+    var d []byte
+    _, err := c.Read(d)
+    if (err != nil) {
+      return
+    }
+		if (len(string(d)) > 0) {
+			fmt.Println(string(d))
+		}
+  }
 }
 
 func main() {
@@ -27,7 +35,6 @@ func main() {
 		c, err := l.Accept()
 		if err != nil {
 			fmt.Println(2)
-			continue
 		} else {
 			go obrabotka(c)
 		}
