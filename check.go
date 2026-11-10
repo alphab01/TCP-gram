@@ -16,12 +16,12 @@ func obrabotka(c net.Conn) {
 	}
   for {
     d := make([]byte, 10000)
-    _, err := c.Read(d)
+    s, err := c.Read(d)
     if (err != nil) {
       return
     }
-		if (len(string(d)) > 0) {
-			fmt.Print(string(d))
+		if (len(string(d[:s])) > 0) {
+			fmt.Print(string(d[:s]))
 			fmt.Println(c.RemoteAddr())
 			q := 0
 			for i := 0; i < len(lc); i++ {
@@ -31,7 +31,7 @@ func obrabotka(c net.Conn) {
 				}
 			}
 			for i := 0; i < len(lc); i++ {
-				lc[i].Write([]byte(strconv.Itoa(q) + ":\n" + string(d)))
+				lc[i].Write([]byte(strconv.Itoa(q) + ":\n" + string(d[:s])))
 			}
 		}
   }
