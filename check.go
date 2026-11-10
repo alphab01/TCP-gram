@@ -12,7 +12,7 @@ func obrabotka(c net.Conn) {
 		return
 	}
   for {
-    var d []byte
+    d := make([]byte, 64)
     _, err := c.Read(d)
     if (err != nil) {
       return
