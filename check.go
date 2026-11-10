@@ -19,5 +19,6 @@ func main() {
     if (err != nil) {
       fmt.Println(3)
     }
+    l.Close()
   }
 }
