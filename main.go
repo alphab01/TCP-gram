@@ -5,7 +5,11 @@ import (
   "net/http"
 )
 
-var Usrs []http.ResponseWriter
+func h(w http.ResponseWriter, r *http.Request) {
+  fmt.Println("hello world")
+}
+
+/*var Usrs []http.ResponseWriter
 
 func h(w http.ResponseWriter, r *http.Request) {
   for i := 0; i < len(Usrs); i++ {
@@ -14,7 +18,7 @@ func h(w http.ResponseWriter, r *http.Request) {
   w.Write([]byte("Hello world"))
   Usrs = append(Usrs, w)
   fmt.Println("Hello world")
-}
+}*/
 
 func main() {
   http.HandleFunc("/", h)
