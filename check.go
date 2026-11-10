@@ -9,27 +9,29 @@ import (
 var lc []net.Conn
 
 func obrabotka(c net.Conn) {
+	defer c.Close()
+	q := 0
+	for i := 0; i < len(lc); i++ {
+		if (c == lc[i]) {
+			q = i
+			break
+		}
+	}
 	_, err := c.Write([]byte("hello"))
 	if err != nil {
-		fmt.Println(3)
+  	lc = append(lc[:q], lc[q + 1:]...)
 		return
 	}
   for {
     d := make([]byte, 10000)
     s, err := c.Read(d)
     if (err != nil) {
-      return
+      lc = append(lc[:q], lc[q + 1:]...)
+			return
     }
 		if (len(string(d[:s])) > 0) {
 			fmt.Print(string(d[:s]))
 			fmt.Println(c.RemoteAddr())
-			q := 0
-			for i := 0; i < len(lc); i++ {
-				if (c == lc[i]) {
-					q = i
-					break
-				}
-			}
 			for i := 0; i < len(lc); i++ {
 				lc[i].Write([]byte(strconv.Itoa(q) + ":\n" + string(d[:s])))
 			}
