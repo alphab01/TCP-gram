@@ -6,40 +6,39 @@ import (
 	"strconv"
 )
 
-var lc []net.Conn
+var lc map[net.Conn]string
+
+var k int
 
 func obrabotka(c net.Conn) {
 	defer c.Close()
-	q := 0
-	for i := 0; i < len(lc); i++ {
-		if (c == lc[i]) {
-			q = i
-			break
-		}
-	}
 	_, err := c.Write([]byte("hello"))
 	if err != nil {
-  	lc = append(lc[:q], lc[q + 1:]...)
+    lc[c] = "err"
 		return
 	}
   for {
     d := make([]byte, 10000)
     s, err := c.Read(d)
     if (err != nil) {
-      lc = append(lc[:q], lc[q + 1:]...)
+      lc[c] = "err"
 			return
     }
 		if (len(string(d[:s])) > 0) {
 			fmt.Print(string(d[:s]))
 			fmt.Println(c.RemoteAddr())
-			for i := 0; i < len(lc); i++ {
-				lc[i].Write([]byte(strconv.Itoa(q) + ":\n" + string(d[:s])))
+			for i, m := range lc {
+        if (m != "err") {
+  	    	i.Write([]byte(lc[c] + ":\n" + string(d[:s])))
+        }
 			}
 		}
   }
 }
 
 func main() {
+	lc = make(map[net.Conn]string)
+  k = 0
 	l, err := net.Listen("tcp", "localhost:8080")
 	if err != nil {
 		fmt.Println(1)
@@ -52,7 +51,8 @@ func main() {
 		if err != nil {
 			fmt.Println(2)
 		} else {
-			lc = append(lc, c)
+      lc[c] = strconv.Itoa(k)
+      k++
 			go obrabotka(c)
 		}
 	}
