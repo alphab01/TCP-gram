@@ -5,7 +5,7 @@ import (
 	"net"
 )
 
-func obrabotka(c net.Conn) {
+func obrabotka(c net.Conn, lc []net.Conn) {
 	_, err := c.Write([]byte("hello"))
 	if err != nil {
 		fmt.Println(3)
@@ -20,13 +20,16 @@ func obrabotka(c net.Conn) {
 		if (len(string(d)) > 0) {
 			fmt.Print(string(d))
 			fmt.Println(c.RemoteAddr())
-			c.Write(d)
+			for i := 0; i < len(lc); i++ {
+				lc[i].Write(d)
+			}
 		}
   }
 }
 
 func main() {
 	l, err := net.Listen("tcp", "localhost:8080")
+	var lc []net.Conn
 	if err != nil {
 		fmt.Println(1)
 		l.Close()
@@ -38,7 +41,8 @@ func main() {
 		if err != nil {
 			fmt.Println(2)
 		} else {
-			go obrabotka(c)
+			lc = append(lc, c)
+			go obrabotka(c, lc)
 		}
 	}
 }
