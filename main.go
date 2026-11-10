@@ -13,6 +13,7 @@ func h(w http.ResponseWriter, r *http.Request) {
   }
   w.Write([]byte("Hello world"))
   Usrs = append(Usrs, w)
+  fmt.Println("Hello world")
 }
 
 func main() {
