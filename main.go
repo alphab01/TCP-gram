@@ -104,6 +104,7 @@ func obrabotka(c net.Conn) {
 						lc.mu.Lock()
 						delete(lc.ma, c)
 						lc.mu.Unlock()
+						return
 					}
         }	else {
 					c.Write([]byte("err"))
