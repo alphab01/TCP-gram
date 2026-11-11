@@ -21,7 +21,7 @@ func obrabotka(c net.Conn) {
 	_, err := c.Write([]byte("hello"))
 	if err != nil {
     lc.mu.Lock()
-    lc.ma[c] = "err"
+    delete(lc.ma, c)
     lc.mu.Unlock()
 		return
 	}
