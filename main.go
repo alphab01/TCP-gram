@@ -51,7 +51,7 @@ func obrabotka(c net.Conn) {
         }
       } else {
         if (len(h) > 4 && h[:5] == "/nick") {
-          n := h[6:len(h)]
+          n := h[6:len(h) - 1]
           lc.mu.Lock()
           lc.ma[c] = n
           lc.mu.Unlock()
