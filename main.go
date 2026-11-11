@@ -30,20 +30,22 @@ func obrabotka(c net.Conn) {
 		s, err := c.Read(d)
 		if err != nil {
 			lc.mu.Lock()
-			lc.ma[c] = "err"
+      delete(lc.ma, c)
 			lc.mu.Unlock()
 			return
 		}
 		if len(string(d[:s])) > 0 {
 			fmt.Print(string(d[:s]))
 			fmt.Println(c.RemoteAddr())
+      var q []net.Conn
 			lc.mu.Lock()
-			for i, m := range lc.ma {
-				if m != "err" {
-					i.Write([]byte(lc.ma[c] + ":\n" + string(d[:s])))
-				}
-			}
-			lc.mu.Unlock()
+      for i, _ := range lc.ma {
+        q = append(q, i)
+      }
+      lc.mu.Unlock()
+      for i := 0; i < len(q); i++ {
+        q[i].Write([]byte(lc.ma[c] + ":\n" + string(d[:s])))
+      }
 		}
 	}
 }
