@@ -4,9 +4,15 @@ import (
 	"fmt"
 	"net"
 	"strconv"
+	"sync"
 )
 
-var lc map[net.Conn]string
+type protectmap struct {
+  ma map[net.Conn]string
+  mu sync.Mutex
+}
+
+var lc protectmap
 
 var k int
 
@@ -37,7 +43,7 @@ func obrabotka(c net.Conn) {
 }
 
 func main() {
-	lc = make(map[net.Conn]string)
+	lc = protectmap{ma: make(map[net.Conn]string)}
   k = 0
 	l, err := net.Listen("tcp", "localhost:8080")
 	if err != nil {
@@ -51,7 +57,7 @@ func main() {
 		if err != nil {
 			fmt.Println(2)
 		} else {
-      lc[c] = strconv.Itoa(k)
+      lc.ma[c] = strconv.Itoa(k)
       k++
 			go obrabotka(c)
 		}
