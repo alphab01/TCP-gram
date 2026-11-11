@@ -35,17 +35,32 @@ func obrabotka(c net.Conn) {
 			return
 		}
 		if len(string(d[:s])) > 0 {
-			fmt.Print(string(d[:s]))
-			fmt.Println(c.RemoteAddr())
-      var q []net.Conn
-			lc.mu.Lock()
-      q2 := lc.ma[c]
-      for i, _ := range lc.ma {
-        q = append(q, i)
-      }
-      lc.mu.Unlock()
-      for i := 0; i < len(q); i++ {
-        q[i].Write([]byte(q2 + ":\n" + string(d[:s])))
+      h := string(d[:s])
+      if (string(h[0]) != "/") {
+  			fmt.Print(string(d[:s]))
+  			fmt.Println(c.RemoteAddr())
+        var q []net.Conn
+  			lc.mu.Lock()
+        q2 := lc.ma[c]
+        for i, _ := range lc.ma {
+          q = append(q, i)
+        }
+        lc.mu.Unlock()
+        for i := 0; i < len(q); i++ {
+          q[i].Write([]byte(q2 + ":\n" + string(d[:s])))
+        }
+      } else {
+        if (len(h) > 4 && h[:5] == "/nick") {
+          var n string
+          fmt.Scan(&n)
+          lc.mu.Lock()
+          lc.ma[c] = n
+          lc.mu.Unlock()
+        } else {
+          lc.mu.Lock()
+          c.Write([]byte("err"))
+          lc.mu.Unlock()
+        }
       }
 		}
 	}
