@@ -39,12 +39,13 @@ func obrabotka(c net.Conn) {
 			fmt.Println(c.RemoteAddr())
       var q []net.Conn
 			lc.mu.Lock()
+      q2 := lc.ma[c]
       for i, _ := range lc.ma {
         q = append(q, i)
       }
       lc.mu.Unlock()
       for i := 0; i < len(q); i++ {
-        q[i].Write([]byte(lc.ma[c] + ":\n" + string(d[:s])))
+        q[i].Write([]byte(q2 + ":\n" + string(d[:s])))
       }
 		}
 	}
