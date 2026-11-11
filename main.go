@@ -50,34 +50,44 @@ func obrabotka(c net.Conn) {
           q[i].Write([]byte(q2 + ":\n" + string(d[:s])))
         }
       } else {
-        if (len(h) > 5 && h[:6] == "/nick ") {
-					d2 := make([]byte, 10000)
-					c.Write([]byte("enter new nick\n"))
-					s2, err := c.Read(d2)
-					if (err != nil) {
-						lc.mu.Lock()
-						delete(lc.ma, c)
-						lc.mu.Unlock()
+        if (len(h) > 5 && h[:6] == "/nick\n") {
+					for {
+						d2 := make([]byte, 10000)
+						c.Write([]byte("enter new nick\n"))
+						s2, err := c.Read(d2)
+						if (err != nil) {
+							lc.mu.Lock()
+							delete(lc.ma, c)
+							lc.mu.Unlock()
+							return
+						}
+						if (len(string(d2[:s2 - 1])) > 0) {
+							lc.mu.Lock()
+							lc.ma[c] = string(d2[:s2 - 1])
+							lc.mu.Unlock()
+							break
+						}
 					}
-          lc.mu.Lock()
-          lc.ma[c] = string(d2[:s2 - 1])
-          lc.mu.Unlock()
-        } else if (len(h) > 9 && h[:10] == "/nickname ") {
-					d2 := make([]byte, 10000)
-					c.Write([]byte("enter new nick\n"))
-					s2, err := c.Read(d2)
-					if (err != nil) {
-						lc.mu.Lock()
-						delete(lc.ma, c)
-						lc.mu.Unlock()
+        } else if (len(h) > 9 && h[:10] == "/nickname\n") {
+					for {
+						d2 := make([]byte, 10000)
+						c.Write([]byte("enter new nick\n"))
+						s2, err := c.Read(d2)
+						if (err != nil) {
+							lc.mu.Lock()
+							delete(lc.ma, c)
+							lc.mu.Unlock()
+							return
+						}
+						if (len(string(d2[:s2 - 1])) > 0) {
+							lc.mu.Lock()
+							lc.ma[c] = string(d2[:s2 - 1])
+							lc.mu.Unlock()
+							break
+						}
 					}
-          lc.mu.Lock()
-          lc.ma[c] = string(d2[:s2 - 1])
-          lc.mu.Unlock()
         } else {
-					lc.mu.Lock()
-					delete(lc.ma, c)
-					lc.mu.Unlock()
+					c.Write([]byte("err"))
 				}
       }
 		}
