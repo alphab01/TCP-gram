@@ -86,7 +86,26 @@ func obrabotka(c net.Conn) {
 							break
 						}
 					}
-        } else {
+        } else if (len(h) > 5 && h[:6] == "/quit\n") {
+					for {
+						c.Write([]byte("Goodbye\n"))
+						var cl []net.Conn
+						lc.mu.Lock()
+						for i, _ := range lc.ma {
+							if (c != i) {
+								cl = append(cl, i)
+							}
+						}
+						cln := lc.ma[c]
+						lc.mu.Unlock()
+						for i := 0; i < len(cl); i++ {
+							cl[i].Write([]byte(cln + " leaved\n"))
+						}
+						lc.mu.Lock()
+						delete(lc.ma, c)
+						lc.mu.Unlock()
+					}
+        }	else {
 					c.Write([]byte("err"))
 				}
       }
