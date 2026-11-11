@@ -60,9 +60,19 @@ func obrabotka(c net.Conn) {
           lc.mu.Lock()
           lc.ma[c] = string(d2[:s2 - 1])
           lc.mu.Unlock()
+        } else if (len(h) > 8 && h[:9] == "/nickname") {
+					d2 := make([]byte, 10000)
+					c.Write([]byte("enter new nick\n"))
+					s2, err := c.Read(d2)
+					if (err != nil) {
+						c.Write([]byte("err"))
+					}
+          lc.mu.Lock()
+          lc.ma[c] = string(d2[:s2 - 1])
+          lc.mu.Unlock()
         } else {
           c.Write([]byte("err"))
-        }
+				}
       }
 		}
 	}
